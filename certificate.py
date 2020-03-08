@@ -27,7 +27,6 @@ subject = 'This is just a test'
 for j in range(inputWorksheet.nrows):
     msg = MIMEMultipart()
     msg['From'] = sender
-    msg['Bcc'] = ', '.join(receiver)
     msg['Subject'] = subject
 
     body = 'Here is an attachment with the mail.\nPlease do not discose the certificate elsewhere.'
