@@ -1,9 +1,9 @@
 import xlrd
 import smtplib
-import getpass
-import imghdr
-from email.message import EmailMessage
-
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+from email.mime.base import MIMEBase
+from email import encoders
 
 path = "ncc.xlsx"
 inputWorkbook = xlrd.open_workbook(path)
@@ -11,40 +11,43 @@ inputWorksheet = inputWorkbook.sheet_by_index(0)
 
 user1 = []
 user2 = []
-bcc = []
+receiver = []
+
 for i in range(inputWorksheet.nrows):
     user1.append(inputWorksheet.cell_value(i, 1))
     user2.append(inputWorksheet.cell_value(i, 2))
-    if user2[i] == '':
-        user2[i] == 'null'
-    bcc.append(inputWorksheet.cell_value(i, 3))
-
+    receiver.append(inputWorksheet.cell_value(i, 3))
+print(user2)
 
 sender = 'credenzusser@gmail.com'
-password = getpass.getpass("Enter your password:- ")
+subject = 'This is just a test'
 
-msg = EmailMessage()
+msg = MIMEMultipart()
 msg['From'] = sender
-msg['Subject'] = "This is just a test"
-msg['Bcc'] = ', '.join(bcc)
-msg.set_content(
-    "Here is an attachment with the mail.\nPlease do not discose the certificate elsewhere.")
+msg['To'] = ', '.join(receiver)
+msg['Subject'] = subject
 
-files = [f'{user1[0]}.png', f'{user2[0]}.png']
+body = 'Here is an attachment with the mail.\nPlease do not discose the certificate elsewhere.'
+msg.attach(MIMEText(body, 'plain'))
 
-for file in files:
-    if file == "null":
-        pass
-    else:
-        with open(file, 'rb') as image:
-            file_data = image.read()
-            file_type = imghdr.what(image.name)
-            file_name = image.name
+for j in range(inputWorksheet.nrows):
+    files = [f'{user1[j]}.png', f'{user2[j]}.png']
+    for filename in files:
+        if filename == '.png':
+            pass
+        else:
+            attachment = open(filename, 'rb')
+            part = MIMEBase('application', 'octet-stream')
+            part.set_payload((attachment).read())
+            encoders.encode_base64(part)
+            part.add_header('Content-Disposition',
+                            'attachement; filename= '+filename)
 
-        msg.add_attachment(file_data, maintype='image',
-                           subtype=file_type, filename=file_name)
-
-with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
-    smtp.login(sender, password)
-    smtp.send
-print(f'Sent mails')
+            msg.attach(part)
+            text = msg.as_string()
+    server = smtplib.SMTP('smtp.gmail.com', 587)
+    server.starttls()
+    server.login(sender, "credenztechdays")
+    server.sendmail(sender, receiver[j], text)
+    print(f'Sent mail {j+1}')
+server.quit()
