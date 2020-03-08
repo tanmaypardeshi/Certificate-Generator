@@ -1,5 +1,6 @@
 import xlrd
 import smtplib
+import getpass
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from email.mime.base import MIMEBase
@@ -17,20 +18,21 @@ for i in range(inputWorksheet.nrows):
     user1.append(inputWorksheet.cell_value(i, 1))
     user2.append(inputWorksheet.cell_value(i, 2))
     receiver.append(inputWorksheet.cell_value(i, 3))
-print(user2)
 
 sender = 'credenzusser@gmail.com'
+password = getpass.getpass('Enter password:- ')
 subject = 'This is just a test'
 
-msg = MIMEMultipart()
-msg['From'] = sender
-msg['Bcc'] = ', '.join(receiver)
-msg['Subject'] = subject
-
-body = 'Here is an attachment with the mail.\nPlease do not discose the certificate elsewhere.'
-msg.attach(MIMEText(body, 'plain'))
 
 for j in range(inputWorksheet.nrows):
+    msg = MIMEMultipart()
+    msg['From'] = sender
+    msg['Bcc'] = ', '.join(receiver)
+    msg['Subject'] = subject
+
+    body = 'Here is an attachment with the mail.\nPlease do not discose the certificate elsewhere.'
+    msg.attach(MIMEText(body, 'plain'))
+
     files = [f'{user1[j]}.png', f'{user2[j]}.png']
     for filename in files:
         if filename == '.png':
@@ -47,7 +49,7 @@ for j in range(inputWorksheet.nrows):
             text = msg.as_string()
     server = smtplib.SMTP('smtp.gmail.com', 587)
     server.starttls()
-    server.login(sender, "credenztechdays")
+    server.login(sender, password)
     server.sendmail(sender, receiver[j], text)
     print(f'Sent mail {j+1}')
     server.quit()
