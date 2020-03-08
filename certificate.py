@@ -24,7 +24,7 @@ subject = 'This is just a test'
 
 msg = MIMEMultipart()
 msg['From'] = sender
-msg['To'] = ', '.join(receiver)
+msg['Bcc'] = ', '.join(receiver)
 msg['Subject'] = subject
 
 body = 'Here is an attachment with the mail.\nPlease do not discose the certificate elsewhere.'
@@ -50,4 +50,4 @@ for j in range(inputWorksheet.nrows):
     server.login(sender, "credenztechdays")
     server.sendmail(sender, receiver[j], text)
     print(f'Sent mail {j+1}')
-server.quit()
+    server.quit()
