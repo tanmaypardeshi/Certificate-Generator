@@ -22,10 +22,11 @@ for i in range(inputWorksheet.nrows):
     draw = ImageDraw.Draw(image1)
     draw.text(xy=(525, 430), text=user1[i], fill=(0, 0, 0), font=font)
     image1.save(f'{user1[i]}.png')
+    print(f'Generated certificate for:-\n{user1[i]}')
     draw = ImageDraw.Draw(image2)
     draw.text(xy=(525, 430), text=user2[i], fill=(0, 0, 0), font=font)
     if user2[i] == '':
         pass
     else:
+        print(f'{user2[i]}')
         image2.save(f'{user2[i]}.png')
-    print(f'Generated for {user1[i]} and {user2[i]}')
