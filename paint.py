@@ -22,7 +22,7 @@ for i in range(rows-1):
     draw = ImageDraw.Draw(image1)
     draw.text(xy=(545, 435), text=user1[i], fill=(0, 0, 0), font=font)
     image1.save(f'{user1[i]}.png')
-    print(f'Generated certificate {i} for:-\n{user1[i]}')
+    print(f'Generated certificate {i+1} for:-\n{user1[i]}')
     draw = ImageDraw.Draw(image2)
     draw.text(xy=(545, 435), text=user2[i], fill=(0, 0, 0), font=font)
     if user2[i] == '':
