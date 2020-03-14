@@ -1,7 +1,7 @@
 from PIL import Image, ImageDraw, ImageFont
 import xlrd
 
-path = "ncc.xlsx"
+path = "NCC.xlsx"
 inputWorkbook = xlrd.open_workbook(path)
 inputWorksheet = inputWorkbook.sheet_by_index(0)
 
@@ -20,11 +20,11 @@ for i in range(inputWorksheet.nrows):
     font = ImageFont.truetype(
         '/usr/share/fonts/truetype/freefont/FreeMono.ttf', size=25)
     draw = ImageDraw.Draw(image1)
-    draw.text(xy=(525, 430), text=user1[i], fill=(0, 0, 0), font=font)
+    draw.text(xy=(545, 435), text=user1[i], fill=(0, 0, 0), font=font)
     image1.save(f'{user1[i]}.png')
-    print(f'Generated certificate for:-\n{user1[i]}')
+    print(f'Generated certificate {i+1} for:-\n{user1[i]}')
     draw = ImageDraw.Draw(image2)
-    draw.text(xy=(525, 430), text=user2[i], fill=(0, 0, 0), font=font)
+    draw.text(xy=(545, 435), text=user2[i], fill=(0, 0, 0), font=font)
     if user2[i] == '':
         pass
     else:
