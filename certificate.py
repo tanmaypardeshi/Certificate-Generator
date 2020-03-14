@@ -9,12 +9,13 @@ from email import encoders
 path = "NCC.xlsx"
 inputWorkbook = xlrd.open_workbook(path)
 inputWorksheet = inputWorkbook.sheet_by_index(0)
+rows = inputWorksheet.nrows
 
 user1 = []
 user2 = []
 receiver = []
 
-for i in range(inputWorksheet.nrows):
+for i in range(1,rows):
 	user1.append(inputWorksheet.cell_value(i, 1))
 	user2.append(inputWorksheet.cell_value(i, 2))
 	receiver.append(inputWorksheet.cell_value(i, 3))
@@ -23,9 +24,8 @@ sender = 'credenzuser@gmail.com'
 password = getpass.getpass('Enter password:- ')
 subject = 'This is just a test'
 
-    
-
-for j in range(inputWorksheet.nrows):
+ 
+for j in range(rows-1):
 	msg = MIMEMultipart()
 	msg['From'] = sender
 	msg['Subject'] = subject
