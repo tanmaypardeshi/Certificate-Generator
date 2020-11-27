@@ -3,3 +3,10 @@ certificate.jpeg
 *.xlsx
 *.png
 
+.idea/.gitignore
+.idea/Certificate.iml
+.idea/inspectionProfiles/
+.idea/misc.xml
+.idea/modules.xml
+.idea/vcs.xml
+Work.ttf

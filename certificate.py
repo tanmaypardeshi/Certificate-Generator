@@ -1,4 +1,5 @@
 import xlrd
+import os
 import smtplib
 import getpass
 from email.mime.text import MIMEText
@@ -6,51 +7,53 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.base import MIMEBase
 from email import encoders
 
-path = "NCC.xlsx"
+sender = 'pisb.credenz20@gmail.com'
+password = getpass.getpass('Enter password:- ')
+subject = 'PISB Ideathon 2020 Participation Certificate'
+
+path = "participation.xlsx"
 inputWorkbook = xlrd.open_workbook(path)
 inputWorksheet = inputWorkbook.sheet_by_index(0)
 rows = inputWorksheet.nrows
 
-user1 = []
-user2 = []
-receiver = []
+user = []
+objects = {}
 
-for i in range(1,rows):
-	user1.append(inputWorksheet.cell_value(i, 1))
-	user2.append(inputWorksheet.cell_value(i, 2))
-	receiver.append(inputWorksheet.cell_value(i, 3))
+for i in range(rows):
+    objects['email'] = inputWorksheet.cell_value(i,2)
+    objects['name'] = inputWorksheet.cell_value(i, 1)
+    objects['team'] = inputWorksheet.cell_value(i, 0)
+    user.append(objects)
+    objects = {}
 
-sender = 'credenzuser@gmail.com'
-password = getpass.getpass('Enter password:- ')
-subject = 'This is just a test'
+server = smtplib.SMTP('smtp.gmail.com', 587)
+server.starttls()
+server.login(sender, password)
 
- 
-for j in range(rows-1):
-	msg = MIMEMultipart()
-	msg['From'] = sender
-	msg['Subject'] = subject
+for person in user:
+    try:
+        msg = MIMEMultipart()
+        msg['From'] = sender
+        msg['Subject'] = subject
 
-	body = 'Here is an attachment with the mail.\nPlease do not discose the certificate elsewhere.'
-	msg.attach(MIMEText(body, 'plain'))
+        team = person['team']
+        name = person['name']
+        email = person['email']
 
-	files = [f'{user1[j]}.png', f'{user2[j]}.png']
-	for filename in files:
-		if filename == '.png':
-			pass
-		else:
-			attachment = open(filename, 'rb')
-			part = MIMEBase('application', 'octet-stream')
-			part.set_payload((attachment).read())
-			encoders.encode_base64(part)
-			part.add_header('Content-Disposition',
-							'attachement; filename= '+filename)
+        body = f'Hi {name}, \n\nThank you participating in the PISB Ideathon 2020.\nWe hope you enjoyed it and would love to see you in future events by PISB, Pune.' \
+                   f'\n\nIt would be wonderful if you share your certificate on social media with hashtag #pisb #ideathon\n\nThanks and Regards, PICT IEEE Student Branch'
+        msg.attach(MIMEText(body, 'plain'))
 
-			msg.attach(part)
-			text = msg.as_string()
-	server = smtplib.SMTP('smtp.gmail.com', 587)
-	server.starttls()
-	server.login(sender, password)
-	server.sendmail(sender, receiver[j], text)
-	print(f'Sent mail to {receiver[j]}')
-	server.quit()
-
+        file = f'{os.getcwd()}/certificates/{team}_{name}.jpg'
+        attachment = open(file, 'rb')
+        part = MIMEBase('application', 'octet-stream')
+        part.set_payload(attachment.read())
+        encoders.encode_base64(part)
+        part.add_header('Content-Disposition', 'attachement; filename= ' + f'{team}_{name}.jpg')
+        msg.attach(part)
+        text = msg.as_string()
+        server.sendmail(sender, email, text)
+        print(f'Sent mail to {email}')
+    except Exception as e:
+        print(e.__str__(), f'Could not send an email to {email}')
+server.quit()
