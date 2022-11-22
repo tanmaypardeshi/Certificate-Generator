@@ -1,2 +1,2 @@
-Pillow==7.1.2
+Pillow==9.3.0
 xlrd==1.2.0
